@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My test page</title>
+  </head>
+  <body>
+    <h1>My test page</h1>
+    <p>PASS : </p><p id="pass">0</p>
+    <p>FAIL : </p><p id="fail">0</p>
+    <canvas id="canvas" width="700" height="700"></canvas>
+    <script>
+      let scopeSize = 500;
+      let buttonSize = 50;
+      let backgrundSize = scopeSize + buttonSize;
+      let buttons = [];
+      let board;
+
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+ 
+      function getMousePos(canvas, event) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        };
+      }
+ 
+      function checkInWhichbutton(pos, buttons, buttonSize) {
+        for (let i = 0; i < 8; i++) {
+          if (pos.x > buttons[i].x && pos.x < buttons[i].x + buttonSize && pos.y < buttons[i].y + buttonSize && pos.y > buttons[i].y) {
+            return i;
+          }
+        }
+        return 87;
+      }
+ 
+      function initButtonInfo(buttons, scopeSize) {
+        let xRotationArr = [2, 3, 4, 3, 2, 1, 0, 1];
+        let yRotationArr = [0, 1, 2, 3, 4, 3, 2, 1];
+ 
+        for (let i = 0; i < 8; i++) {
+          buttons.push({
+            x : scopeSize/4 * xRotationArr[i],
+            y : scopeSize/4 * yRotationArr[i]
+          });
+        }
+      }
+ 
+      function getRandomBoard() {
+        let numOfboardsType = 8;
+        let boards = [
+          { loc : [0, 1, 3, 5, 7],
+            ans : [0]
+          },
+          { loc : [1, 3, 4, 5, 7],
+            ans : [4]
+          },
+          { loc : [1, 2, 4, 6, 7],
+            ans : [1, 2]
+          },
+          { loc : [0, 1, 3, 4, 7],
+            ans : [3]
+          },
+          { loc : [0, 3, 4, 6, 7],
+            ans : [6]
+          },
+          { loc : [0, 2, 4, 6, 7],
+            ans : [7]
+          },
+          { loc : [2, 4, 5, 6, 7],
+            ans : [5]
+          },
+          { loc : [1, 2, 3, 4, 7],
+            ans : [3]
+          }
+        ];
+        return boards[Math.floor(Math.random() * numOfboardsType)];
+      }
+ 
+      function drawButton(ctx) {
+        board.loc.forEach(element => {
+          ctx.fillRect(buttons[element].x, buttons[element].y, buttonSize, buttonSize);
+        });
+      }
+
+      function listener(evt) {
+        var mousePos = getMousePos(canvas, evt);
+
+        let buttonOnClick = checkInWhichbutton(mousePos, buttons, buttonSize);
+        if (buttonOnClick != 87) {
+            canvas.removeEventListener('click', listener, false);
+            if (board.ans.includes(buttonOnClick)) {
+                console.log('Y');
+                document.getElementById("pass").textContent = ++document.getElementById("pass").textContent;
+            } else {
+                console.log('N');
+                document.getElementById("fail").textContent = ++document.getElementById("fail").textContent;
+            }
+            reset();
+        }
+      }
+ 
+      function reset() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+ 
+        ctx.fillStyle = "green";
+        ctx.fillRect(0, 0, backgrundSize, backgrundSize);
+        ctx.fillStyle = 'rgba(225,225,225,0.5)';
+ 
+        board = getRandomBoard();
+        drawButton(ctx);
+        canvas.addEventListener('click', listener, false);
+      }
+ 
+      initButtonInfo(buttons, scopeSize);
+      reset();
+    </script>
+  </body>
+</html>
