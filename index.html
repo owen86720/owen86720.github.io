@@ -46,6 +46,16 @@
             y : scopeSize/4 * yRotationArr[i]
           });
         }
+
+        let shift = 45;
+        buttons[1].x += shift;
+        buttons[1].y -= shift;
+        buttons[3].x += shift;
+        buttons[3].y += shift;
+        buttons[5].x -= shift;
+        buttons[5].y += shift;
+        buttons[7].x -= shift;
+        buttons[7].y -= shift;
       }
  
       function getRandomBoard() {
